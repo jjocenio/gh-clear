@@ -8,6 +8,8 @@ gh extension install jjocenio/gh-clear
 
 ## Usage
 ```
-gh clear
+gh clear [<default-branch-name>]
 ```
+
+If you are in a detached head branch, you need to specify the default branch name because it can't be detected.
 

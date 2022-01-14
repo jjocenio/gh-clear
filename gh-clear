@@ -1,15 +1,21 @@
 #!/bin/bash
-default_branch=$(git symbolic-ref -q refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+default_branch=$1
 
 if [[ -z ${default_branch} ]]; then
-  echo "Unable to find the default branch. The current branch might be in detached HEAD state or you are already on it"
+  default_branch=$(git symbolic-ref -q refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+fi
+
+if [[ -z ${default_branch} ]]; then
+  echo "Unable to find the default branch."
+  echo "The current branch might be in detached HEAD state or you are already on it."
+  echo "If you are not on the default branch, try to use the command 'gh clear default-branch-name'"
   exit 1
 fi
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 uncommitted_changes=$(git status --porcelain=v1 2>/dev/null | wc -l)
 
-if [[ ${uncommited_changes} -ge 1 ]]; then
+if [[ ${uncommitted_changes} -ne 0 ]]; then
   echo "There are uncommitted changes that will be lost in your branch"
   git status
   exit 1
