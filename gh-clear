@@ -1,5 +1,11 @@
 #!/bin/bash
-default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+default_branch=$(git symbolic-ref -q refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+
+if [[ -z ${default_branch} ]]; then
+  echo "Unable to find the default branch. The current branch might be in detached HEAD state or you are already on it"
+  exit 1
+fi
+
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 uncommitted_changes=$(git status --porcelain=v1 2>/dev/null | wc -l)
 
