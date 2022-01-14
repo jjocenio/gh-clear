@@ -1,0 +1,16 @@
+#!/bin/bash
+default_branch=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+uncommitted_changes=$(git status --porcelain=v1 2>/dev/null | wc -l)
+
+if [[ ${uncommited_changes} -ge 1 ]]; then
+  echo "There are uncommitted changes that will be lost in your branch"
+  git status
+  exit 1
+fi
+
+echo "Default branch: ${default_branch}"
+if [[ "${current_branch}" != "${default_branch}" ]]; then
+   echo "Current branch: ${current_branch}"
+   git checkout ${default_branch} && git pull && git branch -d ${current_branch}
+fi
